@@ -1,0 +1,17 @@
+{
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "trailingComma": "es5",
+    "printWidth": 120,
+    "arrowParens": "avoid",
+    "endOfLine": "auto",
+    "overrides": [
+        {
+            "files": "{**/*,*}.{css,scss,sass,less,js,jsx,ts,tsx,json,md,mdx}",
+            "excludeFiles": ["**/node_modules/**", "**/lib/**"]
+        }
+    ]
+}
