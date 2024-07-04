@@ -12,10 +12,12 @@ class AuthController {
             if (errors.isEmpty()) {
                 const { userName, password }: Omit<IUser, 'posts' | '_id'> = await req.body;
                 const hashPassword = bcrypt.hashSync(password, 7);
-                const data = await authRepositories.registration(userName, hashPassword);
 
-                if (!data) return res.status(400).send({ error: 'Пользователь с таким именем уже существует!' });
-                res.status(200).send({ message: 'Регистрация прошла успешно!', user: data });
+                const isExistUser: IUser | null = await authRepositories.findUserByName(userName);
+                if (isExistUser) return res.status(400).send({ error: 'Пользователь с таким именем уже существует!' });
+
+                await authRepositories.createUser(userName, hashPassword);
+                res.status(200).send({ message: 'Регистрация прошла успешно!' });
                 return;
             }
             res.status(400).send({ error: 'Некорректные данные при регистрации' });
