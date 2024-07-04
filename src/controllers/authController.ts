@@ -14,28 +14,28 @@ class AuthController {
                 const hashPassword = bcrypt.hashSync(password, 7);
                 const data = await authRepositories.registration(userName, hashPassword);
 
-                if (!data) return res.status(400).send({ message: 'Пользователь с таким именем уже существует!' });
+                if (!data) return res.status(400).send({ error: 'Пользователь с таким именем уже существует!' });
                 res.status(200).send({ message: 'Регистрация прошла успешно!', user: data });
                 return;
             }
-            res.status(400).send({ errors: 'Некорректные данные при регистрации' });
+            res.status(400).send({ error: 'Некорректные данные при регистрации' });
         } catch (err) {
-            res.status(500).send({ message: 'Что-то пошло не так, попробуйте еще раз' });
+            res.status(500).send({ error: 'Что-то пошло не так, попробуйте еще раз' });
         }
     };
 
     login = async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
-            if (!errors.isEmpty()) return res.status(400).send({ errors: 'Некорректные данные при входе' });
+            if (!errors.isEmpty()) return res.status(400).send({ error: 'Некорректные данные при входе' });
 
             const { userName, password }: Omit<IUser, 'posts' | '_id'> = await req.body;
             const user: IUser | null = await authRepositories.findUserByName(userName);
 
-            if (!user) return res.status(400).send({ errors: 'Пользователь с таким именем не найден' });
+            if (!user) return res.status(400).send({ error: 'Пользователь с таким именем не найден' });
 
             if (!bcrypt.compareSync(password, user.password)) {
-                return res.status(400).send({ errors: 'Некорректные данные при входе' });
+                return res.status(400).send({ error: 'Некорректные данные при входе' });
             }
 
             const accessToken = generateAccessToken(user._id);
@@ -46,16 +46,20 @@ class AuthController {
                 user: { id: user._id, userName },
             });
         } catch (err) {
-            res.status(500).send({ message: 'Что-то пошло не так, попробуйте еще раз' });
+            res.status(500).send({ error: 'Что-то пошло не так, попробуйте еще раз' });
         }
     };
 
     getMe = async (req: Request, res: Response) => {
-        res.send({ message: 'token' });
-    };
+        try {
+            const user = await authRepositories.findUserById(req.body.userId);
 
-    logout = async (req: Request, res: Response) => {
-        res.send({ message: 'Хорошего настроения!' });
+            if (!user) return res.status(401).send({ error: 'Необходима авторизация' });
+
+            res.send({ message: `Пользователь ${user.userName} авторизован` });
+        } catch (err) {
+            res.status(500).send({ error: 'Что-то пошло не так, попробуйте еще раз' });
+        }
     };
 }
 
