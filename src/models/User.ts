@@ -1,14 +1,9 @@
 import mongoose, { Schema } from 'mongoose';
-
-interface IUser {
-    username: string;
-    password: string;
-    posts: Schema.Types.ObjectId[];
-}
+import { IUser } from '../types';
 
 const UserSchema = new Schema<IUser>(
     {
-        username: {
+        userName: {
             type: String,
             required: true,
             unique: true,

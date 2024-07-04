@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import * as mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import { authRouter } from './routes';
 
 dotenv.config();
 
@@ -13,8 +14,11 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
+//Routes
+app.use('/auth', authRouter);
+
 app.get('/', (req: Request, res: Response) => {
-    res.send('Hello World!');
+    res.send({ message: 'Hello World!' });
 });
 
 const start = async () => {
