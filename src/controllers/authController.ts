@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 import { validationResult } from 'express-validator';
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import { authRepositories } from '../repositories';
 import { generateAccessToken } from '../helpers';
 import { IUser } from '../types';
